@@ -80,11 +80,15 @@ RUN npm run test
 # the tests run (without this, the test stage would simply be skipped).
 ###################################################
 FROM base AS final
+WORKDIR /usr/local/app
 ENV NODE_ENV=production
-COPY --from=test /usr/local/app/package.json /usr/local/app/package-lock.json ./
-RUN npm ci --production && \
-    npm cache clean --force
+COPY backend/package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
 COPY backend/src ./src
 COPY --from=client-build /usr/local/app/dist ./src/static
+RUN chown -R node:node /usr/local/app
+USER node
+
 EXPOSE 3000
 CMD ["node", "src/index.js"]
