@@ -87,8 +87,5 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY backend/src ./src
 COPY --from=client-build /usr/local/app/dist ./src/static
-RUN chown -R node:node /usr/local/app
-USER node
-
 EXPOSE 3000
 CMD ["node", "src/index.js"]
